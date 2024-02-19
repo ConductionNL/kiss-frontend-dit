@@ -126,7 +126,7 @@
 
 <script setup lang="ts">
 import { Heading as UtrechtHeading } from "@utrecht/component-library-vue";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import {
   useBerichtTypes,
   useSkills,

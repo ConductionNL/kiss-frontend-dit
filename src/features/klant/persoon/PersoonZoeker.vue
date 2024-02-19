@@ -103,7 +103,7 @@ import { useRouter } from "vue-router";
 import SearchResultsCaption from "@/components/SearchResultsCaption.vue";
 import {
   parseBsn,
-  parseDutchDate,
+  parseGeboortedatumAchternaam,
   parsePostcodeHuisnummer,
 } from "@/helpers/validation";
 import {
@@ -118,7 +118,7 @@ type SearchFields = KlantSearchField | PersoonSearchField;
 const labels: {
   readonly [K in SearchFields]: string;
 } = {
-  geboortedatum: "Geboortedatum",
+  geboortedatumAchternaam: "Geboortedatum + achternaam",
   postcodeHuisnummer: "Postcode + huisnummer",
   email: "E-mailadres",
   telefoonnummer: "Telefoonnummer",
@@ -157,8 +157,8 @@ const currentKlantQuery = computed(() => {
 const currentPersoonQuery = computed(() => {
   const { currentSearch, field } = store.value;
 
-  if (field === "geboortedatum") {
-    const parsed = parseDutchDate(currentSearch);
+  if (field === "geboortedatumAchternaam") {
+    const parsed = parseGeboortedatumAchternaam(currentSearch);
     return parsed instanceof Error
       ? parsed
       : persoonQuery({

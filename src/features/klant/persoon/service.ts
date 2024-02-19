@@ -1,5 +1,8 @@
 import { formatIsoDate } from "@/helpers/date";
-import type { PostcodeHuisnummer } from "@/helpers/validation";
+import type {
+  GeboortedatumAchternaam,
+  PostcodeHuisnummer,
+} from "@/helpers/validation";
 import {
   fetchLoggedIn,
   throwIfNotOk,
@@ -19,7 +22,7 @@ type QueryParam = [string, string][];
 
 type SearchPersoonFieldParams = {
   bsn: string;
-  geboortedatum: Date;
+  geboortedatumAchternaam: GeboortedatumAchternaam;
   postcodeHuisnummer: PostcodeHuisnummer;
 };
 
@@ -44,8 +47,12 @@ export function persoonQuery<K extends PersoonSearchField>(
 
 const queryDictionary: PersoonQueryParams = {
   bsn: (search) => [["burgerservicenummer", search]],
-  geboortedatum: (search) => [
-    ["embedded.geboorte.embedded.datumOnvolledig.datum", formatIsoDate(search)],
+  geboortedatumAchternaam: (search) => [
+    [
+      "embedded.geboorte.embedded.datumOnvolledig.datum",
+      formatIsoDate(search.geboortedatum),
+    ],
+    ["embedded.naam.geslachtsnaam", search.achternaam],
   ],
   postcodeHuisnummer: ({ postcode, huisnummer }) => [
     [
@@ -104,11 +111,15 @@ function getPersoonSearchUrl<K extends PersoonSearchField>(
   page: number | undefined
 ) {
   if (!search) return "";
+
   const url = new URL(personenRootUrl);
+
   getQueryParams<K>(search).forEach((tuple) => {
     url.searchParams.set(...tuple);
   });
+
   url.searchParams.set("extend[]", "all");
+
   if (page !== undefined && page !== 1) {
     url.searchParams.set("_page", page.toString());
   }

@@ -42,22 +42,31 @@ export function parsePostcodeHuisnummer(
   };
 }
 
-export function parseDutchDate(input: string): Date | Error {
-  const dateRegex =
-    /^(([0-9]{2})([0-9]{2})([0-9]{4}))|(([0-9]{1,2})[/|-]([0-9]{1,2})[/|-]([0-9]{4}))$/;
-  const matches = input?.trim().match(dateRegex);
+export interface GeboortedatumAchternaam {
+  geboortedatum: Date;
+  achternaam: string;
+}
 
-  if (matches?.length !== 9) {
+export function parseGeboortedatumAchternaam(
+  input: string
+): GeboortedatumAchternaam | Error {
+  const geboortedatumAchternaamRegex = /^\d{2}-\d{2}-\d{4}\s[\p{L}a-zA-Z\S]/;
+
+  if (!geboortedatumAchternaamRegex.test(input)) {
     return new Error(
-      "Voer een valide datum in, bijvoorbeeld 17-09-2022 of 17092022."
+      "Voer een valide geboortedatum en achternaam in, bijvoorbeeld 17-09-1995 Leeuwen. Voer GEEN tussenvoegsel(s) in."
     );
   }
 
-  const year = +(matches[4] || matches[8]);
-  const month = +(matches[3] || matches[7]) - 1;
-  const day = +(matches[2] || matches[6]);
+  const day: number = parseInt(input.substring(0, 2));
+  const month: number = parseInt(input.substring(3, 5));
+  const year: number = parseInt(input.substring(6, 12));
+  const lastName: string = input.slice(11);
 
-  return new Date(year, month, day);
+  return {
+    geboortedatum: new Date(year, month - 1, day),
+    achternaam: lastName,
+  };
 }
 
 const multipliers = [9, 8, 7, 6, 5, 4, 3, 2, -1] as const;

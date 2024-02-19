@@ -115,6 +115,7 @@ function fetchLookupList(urlStr: string): Promise<LookupList<number, string>> {
         );
       return json
         .filter((x) => typeof x?.id === "number" && typeof x?.slug === "string")
+        .filter((x) => x.slug === "werkinstructie" || x.slug === "nieuws") // we never want to return any other slug
         .map((x) => [x.id, x.slug] as [number, string]);
     })
     .then(createLookupList);

@@ -111,7 +111,9 @@ export const useZakenByZaaknummer = (zaaknummer: Ref<string>) => {
     if (!zaaknummer.value) return "";
     const url = new URL(zaaksysteemBaseUri);
     addExtends(url);
-    url.searchParams.set("identificatie", zaaknummer.value);
+
+    url.searchParams.set("identificatie[like]", zaaknummer.value);
+
     return url.toString();
   };
 
